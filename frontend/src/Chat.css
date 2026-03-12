@@ -1,0 +1,738 @@
+/* --- Reseteo y Globales --- */
+:root {
+  --primary-text: #0d1117;
+  --secondary-text: #25262a;
+  --third-text: #0235b7;
+  --background-main: #ffffff;
+  --background-sidebar: #edf2f7;
+  --background-button-chat: #d7dfea;
+  --background-input: #ecf1f8;
+  --background-output: #f5f8fa;
+  --background-tables: #f8fbfe;
+  --background-active: #d2e4ff;
+  --border-color: #c9ddf1;
+  --accent-color: #126ed6;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  background-color: var(--background-main);
+  color: var(--primary-text);
+}
+
+/* --- Contenedor Principal --- */
+.chat-container {
+  position: relative;
+  display: flex;
+  height: 100vh;
+}
+
+/* --- Barra Lateral (Sidebar) --- */
+.sidebar {
+  position: relative;
+  width: 265px; /* Tamaño fijo, no cambiará */
+  flex-shrink: 0; /* Evita que se encoja */
+  /* background-color: var(--background-sidebar); */
+  padding: 1rem 1.4rem;
+  display: flex; /* ¡La clave es Flexbox! */
+  flex-direction: column; /* Alinea los hijos verticalmente */
+  height: 100vh; /* Ocupa toda la altura */
+  box-sizing: border-box;
+  font-size: 0.93rem;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  overflow-x: hidden;
+  color: var(--secondary-text);
+  border-right: 1px solid var(--background-input); 
+  
+}
+
+.sidebar-gradient-bg {
+  /* Usamos un color de fondo base por si el degradado no carga */
+  background-color: var(--background-sidebar); 
+  
+  /* Tu degradado específico */
+  /* background-image: 
+    radial-gradient(at 0% 0%, hsla(253, 83%, 88%, 0.1) 0px, transparent 50%),
+    radial-gradient(at 99% 9%, hsla(236, 92%, 86%, 0.1) 0px, transparent 50%),
+    radial-gradient(at 75% 85%, hsla(227, 97%, 86%, 0.1) 0px, transparent 50%),
+    radial-gradient(at 20% 90%, hsla(196, 100%, 85%, 0.1) 0px, transparent 50%);
+*/} 
+
+.sidebar button,
+.sidebar select {
+  font-family: inherit; /* Hereda la fuente de la sidebar */
+  font-size: inherit;   /* Hereda el tamaño de fuente de la sidebar */
+  color: inherit;       /* Hereda el color de la sidebar */
+}
+
+.sidebar select {
+  /* --- Reset de apariencia --- */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  width: 100%;
+  padding: 8px 12px;
+  padding-right: 30px; /* Espacio para la flecha */
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--background-main);
+  cursor: pointer;
+}
+
+/* Flecha personalizada usando un pseudo-elemento
+.select-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2357606a'%3e%3cpath fill-rule='evenodd' d='M4.293 6.293a1 1 0 011.414 0L8 8.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  pointer-events: none; /* Permite hacer clic "a través" de la flecha */
+ */
+
+.sidebar .settings {
+  display: flex; /* Convierte .settings en un contenedor flex */
+  flex-direction: column; /* Apila los hijos verticalmente */
+  flex-shrink: 0; /* No se encoge */
+  
+  gap: 1.5rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--secondary-text);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.sidebar-logo {
+  width: 22px; /* Ancho del logo */
+  height: 22px; /* Alto del logo */
+  margin-left: -4px;
+}
+
+/* --- Estilos para el Botón de Colapsar --- */
+.sidebar-toggle-btn {
+  /* Lo movemos a la derecha con un pequeño margen */
+  
+  background: transparent;
+  border: none;
+  color: var(--secondary-text);
+  cursor: pointer;
+  
+  /* --- Posicionamiento y Alineación --- */
+  /* Lo empuja a la derecha del contenedor flex */
+  transition: left 0.3s ease;
+  padding: 8px;
+  display: grid;    /* Usamos grid para un centrado perfecto del icono SVG interno */
+  place-items: center; /* Centra el SVG dentro del botón */
+  width: 32px;      /* Ancho fijo */
+  height: 32px;     /* Alto fijo */
+  
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #e6ebf0;
+  
+}
+
+.sidebar-collapsed .sidebar {
+  width: 60px; /* Ancho final de la barra colapsada */
+  min-width: 60px;
+  align-items: center; /* Centra el botón visible */
+}
+
+/* En el estado colapsado, ocultamos el header y el content */
+.sidebar-collapsed .sidebar-header .sidebar-logo, 
+.sidebar-collapsed .new-chat-btn,
+.sidebar-collapsed .settings,
+.sidebar-collapsed .chats-list-title,
+.sidebar-collapsed .saved-chat-item{
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+}
+
+.sidebar-collapsed .sidebar-header {
+  justify-content: center; /* Centra el contenido del header (el botón) horizontalmente */
+}
+
+/* Y el botón de colapsar debe permanecer visible */
+.sidebar-collapsed .sidebar-toggle-btn {
+    opacity: 1;
+    visibility: visible !important;
+}
+
+/* Botón de Nuevo Chat */
+.new-chat-btn {
+  /* --- Fondo y Borde --- */
+  background-color: transparent; /* Fondo completamente transparente */
+  border: 1px solid transparent; /* Empezamos con un borde transparente */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%; /* Ocupa todo el ancho */
+  text-align: left;
+  /* --- Otros --- */
+  border-radius: 10px; /* Bordes más redondeados */
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  
+  padding: 10px 8px;
+  
+  border: none;
+  text-align: left;
+  background-color: transparent;
+  
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  margin: 1.8rem -8px;
+}
+
+.new-chat-btn:hover {
+  background-color: #e6ebf0;
+}
+
+/* Historial de Chats */
+.saved-chats-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin: 0rem -4px;
+  min-height: 0;
+}
+.saved-chat-item {
+  padding: 10px 8px;
+  margin-bottom: 4px;
+  border-radius: 10px;
+  border: none;
+  width: 100%;
+  text-align: left;
+  background-color: transparent;
+  cursor: pointer;
+  
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  color: var(--primary-text);
+}
+
+.saved-chat-item:hover {
+  background-color: #e6ebf0;
+}
+
+.saved-chat-item.active {
+  background-color: var(--background-active); /* Celeste claro */
+  color: var(--third-text); /* Texto azul más oscuro */
+  font-weight: 500;
+}
+
+.chats-list-title {
+  font-weight: 600;
+  color: var(--primary-text);
+  margin-top: 0.7rem; /* Espacio antes de la lista */
+  flex-shrink: 0;
+  width: 100%;
+}
+
+/* Estilos para la barra de scroll en navegadores WebKit (Chrome, Safari) */
+.saved-chats-list::-webkit-scrollbar {
+  width: 6px; /* Ancho de la barra */
+}
+
+.saved-chats-list::-webkit-scrollbar-track {
+  background: transparent; /* Fondo de la pista */
+}
+
+.saved-chats-list::-webkit-scrollbar-thumb {
+  background-color: var(--border-color); /* Color del "pulgar" */
+  border-radius: 20px;
+  border: 3px solid transparent; /* Crea un efecto de padding */
+}
+
+
+/* --- Contenido Principal --- */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  position:relative;
+  box-sizing: border-box;
+  height: 70vh;
+  overflow-y: auto;
+  /* width: calc(100vw - 280px); */
+  scrollbar-gutter: stable !important;
+  padding-left: 30px;
+  min-width: 0;
+  transition: left 0.3s ease;
+  font-size: 1.05rem;
+}
+
+.main-container-gradient-bg {
+  background: none;
+  /* Fondo complejo con varios degradados radiales para un efecto suave */
+  /* background-color: transparent; /* Un color de fondo base */
+  /* background-image: 
+    radial-gradient(at 0% 0%, hsla(271, 84%, 83%, 0.4) 0px, transparent 50%),
+    radial-gradient(at 99% 9%, hsla(339, 93%, 76%, 0.35) 0px, transparent 50%),
+    radial-gradient(at 75% 85%, hsla(20, 91%, 73%, 0.35) 0px, transparent 50%),
+    radial-gradient(at 20% 90%, hsla(196, 76%, 74%, 0.4) 0px, transparent 50%);  */
+}
+
+.sidebar-collapsed .main-content {
+  width: calc(100vw - 60px);
+  left: -8px;
+}
+
+.sidebar-collapsed .chat-input-area {
+  width: calc(100vw - 60px);
+ 
+}
+
+/* Ventana de Mensajes */
+.chat-window { 
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /*Distancia entre ingreso y salida de IA*/
+  max-width: 850px;
+  width: 100%;
+  padding: 0 2rem;
+  margin: 0 auto; /* Centra el bloque de mensajes */
+  box-sizing: border-box;
+  margin-top: 70px;
+  
+}
+
+.message {
+  padding: 10px 15px;
+  border-radius: 18px;
+  max-width: 100%;
+  word-wrap: break-word;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.message.user {
+  background-color: var(--background-input);
+  
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  max-width: 60%;
+
+  display: flex;             /* 1. Activa Flexbox para los elementos internos (el <p> y el <button>) */
+  flex-direction: column;    /* 2. Apila los elementos verticalmente (párrafo arriba, botón abajo) */
+  align-items: flex-end;     /* 3. ¡LA CLAVE! Alinea los elementos a la derecha del contenedor */
+}
+
+.message.assistant {
+  color: var(--primary-text);
+  align-self: flex-start;
+  border: 1px solid var(--border-color);
+  
+}
+
+.message.assistant table {
+  width: 100%;
+  border-collapse: separate;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+  font-size: 0.95em;
+  
+}
+
+.message.assistant p {
+  margin-bottom: 1.5em;
+}
+
+/* Celdas de encabezado (th) y celdas de datos (td) */
+.message.assistant th,
+.message.assistant td {
+  
+  text-align: left;
+  vertical-align: top; /*Alinea el contenido en la parte superior de la celda*/
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+}
+
+/*Estilo específico para encabezado*/
+.message.assistant th {
+  background-color: var(--background-tables); /*Fondo encabezado*/
+  font-weight: 600; /*Negrita el encabezado*/
+}
+
+/* Quita el borde derecho de la última columna */
+.message.assistant th:last-child,
+.message.assistant td:last-child {
+  border-right: none;
+}
+
+/* Quita el borde inferior de la última fila */
+.message.assistant tr:last-child th,
+.message.assistant tr:last-child td {
+  border-bottom: none;
+}
+
+.message p {
+  margin: 0;
+}
+
+.message.welcome {
+  border: none;
+  background-color: transparent;
+  margin: auto;
+  margin-top: 13rem;
+  /*margin-top: 0rem;*/
+  text-align: center;
+  max-width: 100%;
+  max-height: 100;
+}
+
+.message.welcome p {
+  /*font-size: 2.2rem; /* Hacemos la fuente mucho más grande */
+  font-size: 3.2rem; /* Hacemos la fuente mucho más grande */
+  font-weight: 600; /* Un poco más gruesa */
+  color: var(--accent-color);
+}
+
+/* Si quieres aplicarlo solo al título y al sidebar */
+.message.welcome::selection,
+.message.welcome p::selection,
+.chat-input-area textarea::selection,
+.sidebar *::selection {
+  background: black;
+  color: white;
+}
+
+.message.user::selection,
+.message.assistant::selection {
+  background: rgb(191, 215, 252);
+  
+}
+
+
+/* --- Área de Entrada --- */
+.input-area-container {
+  position: fixed;
+  bottom: 0;
+  z-index: 10;
+  padding: 2rem;
+  box-sizing: border-box;
+  left: 280px; 
+  right: 0; 
+  display: flex;
+  justify-content: center;
+  transition: left 0.3s ease;
+}
+/* Contenedor principal del área de entrada */
+.chat-input-area {
+  display: flex; /* La base para alinear los hijos */
+  flex-direction: column;
+  gap: 0.5rem; /* Espacio entre el textarea y los botones */
+  border: 1px solid var(--border-color);
+  border-radius: 24px; /* Un poco más redondeado */
+  padding: 0.8rem 0.8rem;
+  background-color: white;
+  width: 100%;
+  max-width: 760px;
+  
+  
+  margin-bottom: 20px;
+}
+
+.chat-input-area textarea:focus {
+  outline: none;
+}
+
+.chat-input-area textarea {
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  font-size: 1.1rem;
+  font-family: inherit; /* Asegura que use la misma fuente */
+  resize: none; /* Evita que el usuario pueda cambiarle el tamaño */
+  height: auto; /* Altura base para una línea */
+  min-height: 60px;
+  max-height: 120px; /* Altura máxima antes de que aparezca el scroll */
+  overflow-y: auto; /* Scroll si el texto es muy largo */
+  padding: 8px;
+  box-sizing: border-box;
+
+}
+
+
+
+.chat-input-area input[type="text"]:focus {
+  outline: none;
+}
+
+.chat-input-area button {
+  background: none;
+  border: none;
+  padding: 0 0.5rem;
+  cursor: pointer;
+  color: var(--secondary-text);
+  flex-shrink: 0;
+}
+
+.chat-input-area button:hover {
+  color: var(--primary-text);
+}
+
+.mic-listening {
+  color: var(--accent-color); /* Un color rojo para indicar que está grabando */
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Contenedor para posicionar la flecha */
+.select-wrapper {
+  position: relative;
+}
+
+.setting-item-expert,
+.setting-item-grado {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  gap: 0.4rem;
+}
+
+.style-selector-wrapper select,
+.tool-selector-wrapper select {
+  /* Reseteamos la apariencia que tenía en la sidebar */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.tool-selector-wrapper select {
+  width: 50%;
+}
+
+.input-controls {
+  display: flex;
+  justify-content: space-between; /* LA CLAVE: empuja los hijos a los extremos */
+  align-items: center; /* Los alinea verticalmente */
+  width: 100%; /* Ocupa todo el ancho */
+}
+
+.controls-left, .controls-right{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Estilos genéricos para los botones de control */
+.input-controls button,
+.input-controls select {
+  background: transparent;
+  border: none;
+
+  color: var(--secondary-text);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-controls button:hover {
+  background-color: var(--background-sidebar);
+}
+
+.input-controls select:hover {
+  background-color: var(--background-sidebar);
+  border-radius: 100px;
+}
+
+/* Cuando la sidebar está colapsada */
+.sidebar-collapsed .input-area-container {
+  left: 60px; /* Coincide con el ancho de la sidebar colapsada */
+}
+
+.message.loading {
+  display: flex;        /* Pone los elementos hijos en línea */
+  align-items: center;  /* Los centra verticalmente */
+  gap: 10px;            /* Crea un espacio entre el spinner y el texto */
+  /* Mantenemos estos para que no parezca una burbuja de chat */
+  border: none;
+  background-color: transparent;
+  color: var(--secondary-text);
+}
+
+.loading-circle-spinner .spinner-background {
+  fill: none;
+  stroke: #E0E0E0; /* El gris claro del fondo */
+  
+  
+  stroke-width: 3;
+}
+
+.loading-circle-spinner .spinner-foreground {
+  fill: none;
+  stroke: url(#spinner-gradient); /* ¡Aplicamos el degradado! */
+  stroke-width: 3;
+  stroke-dasharray: 34 66; /* Un valor aproximado para el 75% de la circunferencia */
+  stroke-dashoffset: 0;
+  
+}
+
+@keyframes final-rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-circle-spinner {
+  width: 28px;
+  height: 28px;
+  animation: final-rotation 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; /*cubic-bezier(0.4, 0, 0.2, 1): Esta es una curva de "easing" estándar en la industria*/
+}
+
+/*Copiar información de una tabla*/
+.table-wrapper {
+  position: relative; /* Sigue siendo la referencia para el botón */
+  
+  /* ¡Aquí traemos los estilos de la tabla! */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  
+  /* Esto es clave para que los bordes redondeados funcionen bien */
+  overflow: hidden;
+}
+
+.copy-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border: none;
+  color: var(--primary-text);
+  background-color: transparent;
+  border-radius: 6px;
+  
+  cursor: pointer;
+  font-size: 0.85em;
+  font-family: inherit;
+  z-index: 1; /* Asegura que el botón esté por encima de la tabla */
+
+  opacity: 0; /* Por defecto, el botón es completamente transparente */
+  transition: opacity 0.2s ease-in-out; /* Anima el cambio de opacidad en 0.2s */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2px 2.5px 2px 2.5px;
+}
+
+.copy-button:hover {
+  background-color: var(--background-active);
+  
+  color: var(--secondary-text);
+}
+
+.table-wrapper:hover .copy-button {
+  opacity: 1;
+}
+
+/* Forzar el ajuste de línea en bloques de código o preformateados */
+.message.assistant pre {
+  white-space: pre-wrap;   /* Le dice al navegador que respete los saltos de línea y espacios, pero que también ajuste las líneas largas */
+  word-break: break-all;     /* Una medida más "agresiva" para forzar el corte de palabras si es necesario */
+}
+
+.message.user.collapsed p {
+  max-height: 100px; /* Altura máxima del párrafo cuando está colapsado. ¡Ajusta este valor a tu gusto! */
+  overflow: hidden;    /* Oculta el texto que sobra */
+  /* Opcional: añade un degradado para que el corte no sea tan brusco */
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+}
+
+/* --- AÑADE ESTA NUEVA REGLA --- */
+.expand-btn {
+  background: none;
+  border: none;
+  color: var(--accent-color); /* Color azul para que destaque */
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0px 0px; /* Un poco de espacio vertical */
+  margin-top: 8px; /* Sube un poco el botón para que se solape con el degradado */
+}
+
+.expand-btn:hover {
+  text-decoration: underline;
+}
+
+
+/* 1. Oculta la primera opción (nuestro placeholder) DE LA LISTA DESPLEGABLE */
+select option:first-child {
+  display: none;
+}
+
+/* 2. Cuando el placeholder está seleccionado, dale una apariencia de placeholder */
+.select-placeholder {
+  color: #57606a; /* Un color grisáceo, puedes usar una variable si quieres */
+}
+
+/* 3. Asegura que el texto sea normal cuando se selecciona otra opción */
+select {
+    color: var(--primary-text); /* O el color que usabas para el texto del select */
+}
+
+.main-container-gradient-bg .sidebar {
+  background-color: var(--background-sidebar);
+}
+
+.main-container-gradient-bg .chat-input-area {
+  /* Fondo blanco con 70% de opacidad */
+  background-color: rgba(255, 255, 255, 0.8);
+  
+  
+}
+
+/* .main-container-gradient-bg .chat-input-area {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.4);  Un borde semi-transparente queda mejor 
+} */
