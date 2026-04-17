@@ -1,4 +1,4 @@
-# RAG-Intelligent-Tutoring-System
+# Chatbot para tutoría Académica Personalizada
 AI-powered tutoring system for secondary education using RAG architecture (FastAPI &amp; React).
 
 ## Project Overview
